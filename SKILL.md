@@ -35,8 +35,8 @@ agent_created: true
 ```
 <工程>/
   index.html            ← 从 assets/template.html 复制，填 SHOTS
-  assets/elem_01.png    ← 抠好的元素
-  fonts/*.woff2         ← 从 assets/fonts 复制
+  assets/elem_01.png    ← 从 assets/elements 复制你需要的
+  fonts/*.woff2         ← 从 assets/fonts 复制（四个必须一起，见该目录 README）
 ```
 
 渲染：
@@ -44,6 +44,19 @@ agent_created: true
 VIDEO_ROOT=<工程> VIDEO_W=1080 VIDEO_H=1920 VIDEO_FPS=30 VIDEO_CRF=19 \
   node <html-timeline-video>/assets/render.cjs
 ```
+
+### ⚠️ 跑不起来时按这个顺序查
+
+| 报错 | 根因 | 修法 |
+|---|---|---|
+| `fonts: 3/4 loaded  未加载: NSerif/900` → 中止 | 只拷了 2 个字体，模板声明了 4 个 `@font-face` | 四个 woff2 一起拷 |
+| `shots/` 有截图但元素位置不对 | 视口写死成另一种画幅 | `render.cjs` 的 `VW/VH` 要与 `VIDEO_W/VIDEO_H` 一致 |
+| 成片里元素位置空白一块 | `src` 路径错，`<img>` 静默变 0×0 | 跑 `probe_rects.cjs`，它会 exit 4 拦下 |
+
+**为什么字体那条要当成硬错误**：`await document.fonts.ready` 在没有 pending 请求时会
+**立刻 resolve**，只等它会拿到「以为加载好了、其实还是回退字体」的页面，
+而且这种错误 **PSNR 查不出来**（成片和帧序列错得一模一样）。所以渲染链路必须主动 load
+每个 face 并硬断言。
 
 ## 版式：三种形态混排
 
