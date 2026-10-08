@@ -1,0 +1,25 @@
+# 渲染产物
+frames/
+frames_*/
+check/
+*.mp4
+
+# 中间产物 / 调试输出
+rects.json
+shots/
+定位验片.png
+抠图验片_*.png
+网格验片_*.png
+局部网格_*.png
+.chrome-profile/
+
+# 只排除仓库根的 crop_boxes.json（extract_3d.py 在输出目录生成的中间产物）。
+# assets/elements/crop_boxes.json 是有意提交的 —— 那是 15 个元素的人工核定框数值，
+# 别人抠新素材时可以直接照着填 OVERRIDES。
+/crop_boxes.json
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
